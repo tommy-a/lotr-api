@@ -64,6 +64,7 @@ module.exports = {
         // send notification email via aws lambda in prod
         if (lambda_func) fetch(process.env.AWS_LAMBDA_NEWUSER_URL);
         return res.json({
+          access_token,
           success: true,
         });
       });

@@ -15,11 +15,9 @@ const chapterSchema = new mongoose.Schema(
     },
     bookName: {
       type: String,
-      required: true,
     },
     ChapterData: {
       type: String,
-      required: true,
     },
   },
   {

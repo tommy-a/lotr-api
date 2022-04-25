@@ -1,15 +1,28 @@
 const rateLimit = require("express-rate-limit");
-const apiLimiter = rateLimit({
-    windowMs: 10 * 60 * 1000, // 15 minutes
-    max: 100,
-    // skip limiter for special tokens (e.g. hackathons)
-    // skip: function (req, res) {
-    //   const token = req.header('authorization')?.split(' ')[1];
-    //   if (dpwcToken === token) {
-    //     return true
-    //   }
-    //   return false;
-    // },
-});
 
-module.exports = apiLimiter;
+class ApiLimiter {
+    #store;
+    #rate;
+
+    middleware;
+
+    get maxRate() { return this.rate; };
+
+    set maxRate(rate) {
+        this.rate = rate;
+        this.store.resetAll();
+    };
+
+    constructor (rate = 100) {
+        this.store = new rateLimit.MemoryStore();
+        this.maxRate = rate;
+
+        this.middleware = rateLimit({
+            windowMs: 10 * 60 * 1000, // 15 minutes
+            max: () => this.maxRate,
+            store: this.store
+        });
+    }
+}
+
+module.exports = ApiLimiter;

@@ -10,11 +10,9 @@ const characterSchema = new mongoose.Schema(
     },
     wikiUrl: {
       type: String,
-      required: true,
     },
     race: {
       type: String,
-      required: true,
     },
     birth: {
       type: String || Number || null,

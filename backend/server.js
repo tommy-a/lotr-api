@@ -3,7 +3,7 @@ const db = require("./helpers/db");
 const express = require("express");
 const bcrypt = require("bcrypt");
 const passport = require("passport");
-const apiLimiter = require("./middleware/api.limiter");
+const ApiLimiter = require("./middleware/api.limiter");
 const localStrategy = require("passport-local").Strategy;
 const User = require("./models/user.model");
 const BearerStrategy = require("passport-http-bearer");
@@ -96,7 +96,9 @@ app.use((req, res, next) => {
   }
 });
 
-app.use("/v2/", apiLimiter);
+const apiLimiter = new ApiLimiter();
+
+app.use("/v2/", apiLimiter.middleware);
 app.use("/v2", apiRoutes);
 app.use("/auth", authRoutes);
 
@@ -105,11 +107,25 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname + "/__BUILD/index.html"));
 });
 
+let server;
+
 async function start() {
   await db.connectDb();
-  app.listen(server_port, () =>
-    console.log(`LotR backend listening on port ${server_port}!`)
-  );
+
+  return new Promise((resolve) => {
+    server = app.listen(server_port, () => {
+      console.log(`LotR backend listening on port ${server_port}!`);
+      resolve();
+    });
+  })
 }
 
-module.exports = { start };
+function stop() {
+  server.close(() => process.exit());
+}
+
+function setMaxRate(rate) {
+  apiLimiter.maxRate = rate;
+}
+
+module.exports = { start, stop, setMaxRate };

@@ -10,7 +10,6 @@ const quoteSchema = new mongoose.Schema(
   {
     dialog: {
       type: String,
-      required: true,
       trim: true,
       get: removeBlanks
     },
