@@ -26,7 +26,7 @@ async function connectDb() {
       // the `ObjectId(` prefix and `)` suffix away
       // from the key-value pairs that are of that format
       await Promise.all(modelObjectIdKeys.map(([model, keys]) => {
-        const csvPath = `../db/csv/${model}.csv`;
+        const csvPath = `${__dirname}/../csv/${model}.csv`;
 
         return csvtojson().fromFile(csvPath).then(source => {
           const toInsert = source.map(entry => {
